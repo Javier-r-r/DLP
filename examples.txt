@@ -1,0 +1,151 @@
+true
+let x = true in x
+if false then true else false
+0
+succ (succ (succ 0))
+3
+succ (pred 0)
+iszero (pred (succ (succ 0)))
+if iszero 3 then 0 else 1
+iszero true
+if 1 then true else false     Error argumento no booleano
+if iszero 3 then 0 else false         Error de tipos
+let id = Lx.x in id 3
+let id_bool = L x:Bool. x in id_bool true
+let id_nat = L x:Nat. x in id_nat 5
+let x = 5 in let id_nat = L x:Nat. x in id_nat x
+let fix = lambda f.(lambda x. f (lambda y. x x y)) (lambda x. f (lambda y. x x y)) in let sumaux = lambda f. (lambda n. (lambda m. if (iszero n) then m else succ (f (pred n) m))) in let sum = fix sumaux in sum 21 34
+let fix = lambda f.(lambda x. f (lambda y. x x y)) (lambda x. f (lambda y. x x y)) in let sumaux = lambda f. (lambda n. (lambda m. if (iszero n) then m else succ (f (pred n) m))) in let sum = fix sumaux in let prodaux = lambda f. (lambda n. (lambda m. if (iszero m) then 0 else sum n (f n (pred m)))) in let prod = fix prodaux in prod 12 5
+
+
+PRACTICA
+letrec sum : Nat -> Nat -> Nat = lambda n : Nat. lambda m : Nat. if iszero n then m else succ (sum (pred n) m) in sum 21 34
+letrec sum : Nat -> Nat -> Nat = lambda n : Nat. lambda m : Nat. if iszero n then m else succ (sum (pred n) m) in letrec prod : Nat -> Nat -> Nat = lambda n : Nat. lambda m : Nat. if iszero m then 0 else sum n (prod n (pred m)) in prod 12 5
+
+x = 5;;
+
+f = L y:Nat. x;;
+
+
+Evaluator of lambda expressions...
+>> x = 5;;
+x : Nat = 5
+>> f = Ly:Nat. x;;
+f : (Nat) -> (Nat) = (lambda y:Nat. x)
+>> f 1;;
+- : Nat = 5
+>> f 3;;
+- : Nat = 5
+>> x = 7;;
+x : Nat = 7
+>> f 1;;
+- : Nat = 5
+
+//
+// Apartado: Registros
+//
+
+{x=2, y=5, z=0};;
+
+{x=2, y=5, z=0}.x;;
+
+p = { na = {"Diego", "Dopazo"}, e=21};;
+
+p.na;;
+
+p.na.1;;
+
+p.na.2;;
+
+p.e;;
+
+l = cons[Nat] 8 (cons[Nat] 5 (cons[Nat] 2 nil[Nat]));;
+
+//
+//Apartado: Variantes
+//
+
+Int = <pos:Nat, zero:Bool, neg:Nat>;;
+
+p3 = <pos=3> as Int;;
+
+z0 = <zero=true> as Int;;
+
+n5 = <neg=5> as Int;;
+
+abs = L i : Int.
+case i of
+<pos=p> => (<pos=p> as Int)
+| <zero=z> => (<zero=true> as Int)
+| <neg=n> => (<pos=n> as Int);;
+
+abs p3;;
+
+abs z0;;
+
+abs n5;;
+
+//
+//Apartado: Listas
+//
+
+nil[Nat];; 
+
+l = cons [Nat] 8 (cons [Nat] 5 (cons [Nat] 7 nil [Nat]));;
+
+isnil[Nat] l;;
+
+head[Nat] l;;
+
+tail[Nat] l;;
+
+sum = 
+  letrec sum : Nat -> Nat -> Nat =
+    lambda n : Nat. lambda m : Nat. if iszero n then m else succ (sum (pred n) m)
+	in
+		sum
+	;;
+
+prod = 
+	letrec prod : Nat -> Nat -> Nat =
+		lambda n : Nat. lambda m : Nat. if iszero m then 0 else sum n (prod n (pred m))
+	in
+		prod
+	;;
+
+length = 
+	letrec length : List[Nat] -> Nat = 
+		lambda l : List[Nat]. if isnil[Nat] l then 0 else sum 1 (length (tail[Nat] l))
+	in
+		length
+	;;
+
+length l;;
+
+N3 = Nat -> Nat -> Nat;;
+
+nil[N3];;
+
+cons[N3] sum nil[N3];;
+
+cons[N3] prod (cons[N3] sum nil[N3]);;
+
+length(cons[N3] prod (cons[N3] sum nil[N3]));; Error
+
+head[N3] (cons[N3] prod (cons[N3] sum nil[N3])) 12 5 ;;
+
+
+//
+// Apartado: Subtipado
+//
+
+let
+	idr = lambda r : {}.r
+in
+	idr {x=0, y=1}
+;;
+
+(lambda r : {x : Nat}. r.x) {x=0, y=1};;
+
+
+abs, todas las listas, tmtag L x:N .x;;
